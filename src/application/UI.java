@@ -50,6 +50,6 @@ public class UI {
             System.out.print(piece);
         }
         // Print a new line after each piece.
-        System.out.print("  ");
+        System.out.print(" ");
     }
 }
