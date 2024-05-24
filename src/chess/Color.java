@@ -1,6 +1,17 @@
 package chess;
 
+/**
+ * Enum representing the colors of the chess pieces.
+ */
 public enum Color {
 
-    BLACK, WHITE;
+    /**
+     * Represents the color black.
+     */
+    BLACK,
+
+    /**
+     * Represents the color white.
+     */
+    WHITE;
 }

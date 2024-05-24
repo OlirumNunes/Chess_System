@@ -23,10 +23,32 @@ public class ChessMatch {
     private List<Piece> piecesOnTheBoard = new ArrayList<>();
     private List<Piece> capturedPieces = new ArrayList<>();
 
+    /**
+     * Initializes a new ChessMatch object with a new 8x8 board, turn 1, and the current player as White.
+     */
     public ChessMatch() {
+        /**
+         * Initializes a new 8x8 board.
+         * @param rows The number of rows in the board.
+         * @param columns The number of columns in the board.
+         */
         board = new Board(8, 8);
+
+        /**
+         * Sets the initial turn of the game.
+         * @param turn The number of the turn.
+         */
         turn = 1;
+
+        /**
+         * Sets the initial color of the current player.
+         * @param color The color of the current player.
+         */
         currentPlayer = Color.WHITE;
+
+        /**
+         * Initializes the chess board with the standard setup of pieces.
+         */
         initialSetup();
     }
 
@@ -60,6 +82,13 @@ public class ChessMatch {
      * @return a 2D array of ChessPieces, where each element represents a piece on the board.
      */
     public ChessPiece[][] getPieces() {
+        /**
+         * Creates a 2D array of ChessPieces, where each element represents a piece on the board.
+         *
+         * @param rows The number of rows in the board.
+         * @param columns The number of columns in the board.
+         * @return a 2D array of ChessPieces, where each element represents a piece on the board.
+         */
         ChessPiece[][] mat = new ChessPiece[board.getRows()][board.getColumns()];
         for (int i = 0; i < board.getRows(); i++) {
             for (int j = 0; j < board.getColumns(); j++) {
@@ -75,6 +104,14 @@ public class ChessMatch {
         return board.piece(position).possibleMoves();
     }
 
+    /**
+     * Performs a chess move from the given source position to the target position.
+     *
+     * @param sourcePosition The source position of the move.
+     * @param targetPosition The target position of the move.
+     * @return The captured piece, if any.
+     * @throws ChessException If the move is illegal or puts the player in check.
+     */
     public ChessPiece performChessMove(ChessPosition sourcePosition, ChessPosition targetPosition) {
         Position source = sourcePosition.toPosition();
         Position target = targetPosition.toPosition();
@@ -116,6 +153,13 @@ public class ChessMatch {
         return (ChessPiece) capturedPiece;
     }
 
+    /**
+     * Replaces the promoted piece with the specified type.
+     *
+     * @param type The type of the new piece to be created. It can be "B" for Bishop, "N" for Knight, "R" for Rook, or "Q" for Queen.
+     * @return The newly created piece of the specified type.
+     * @throws IllegalStateException If there is no piece to be promoted.
+     */
     public ChessPiece replacePromotedPiece(String type) {
         if (promoted == null) {
             throw new IllegalStateException("There is no piece to be promoted");
@@ -124,7 +168,7 @@ public class ChessMatch {
                 !type.equals("N") &&
                 !type.equals("R") &&
                 !type.equals("Q")) {
-            throw new ChessException("Invalid piece type");
+            return promoted;
         }
 
         Position pos = promoted.getChessPosition().toPosition();
@@ -138,17 +182,39 @@ public class ChessMatch {
         return newPiece;
     }
 
+    /**
+     * Creates a new ChessPiece object based on the provided type and color.
+     *
+     * @param type  The type of the new piece to be created. It can be "B" for Bishop, "N" for Knight, "R" for Rook, or "Q" for Queen.
+     * @param color The color of the new piece to be created.
+     * @return The newly created piece of the specified type and color.
+     * @throws IllegalArgumentException If the provided type is not a valid piece type.
+     */
     private ChessPiece createChessPiece(String type, Color color) {
-        return switch (type.toUpperCase()) {
-            case "B" -> new Bishop(board, color);
-            case "N" -> new Knight(board, color);
-            case "R" -> new Rook(board, color);
-            case "Q" -> new Queen(board, color);
-            default -> throw new ChessException("Invalid piece type");
-        };
+        switch (type.toUpperCase()) {
+            case "B":
+                return new Bishop(board, color);
+            case "N":
+                return new Knight(board, color);
+            case "R":
+                return new Rook(board, color);
+            case "Q":
+                return new Queen(board, color);
+            default:
+                throw new IllegalArgumentException("Invalid piece type");
+        }
     }
 
-    private Piece makeMove(Position source, Position target) {
+    /*
+     * Makes a move on the chess board from the given source position to the target position.
+     *
+     * @param sourcePosition The source position of the move.
+     * @param targetPosition The target position of the move.
+     * @return The captured piece, if any.
+     * @throws ChessException           If the move is illegal or puts the player in check.
+     * @throws IllegalArgumentException If the provided type is not a valid piece type.
+     */
+    private Piece makeMove(Position source, Position target) throws ChessException, IllegalArgumentException {
         ChessPiece p = (ChessPiece) board.removePiece(source);
         p.increaseMoveCount();
         Piece capturedPiece = board.removePiece(target);
@@ -190,6 +256,15 @@ public class ChessMatch {
         return capturedPiece;
     }
 
+    /**
+     * Undoes the last move made on the chess board.
+     *
+     * @param source        The source position of the move.
+     * @param target        The target position of the move.
+     * @param capturedPiece The captured piece, if any.
+     * @throws ChessException           If the move is illegal or puts the player in check.
+     * @throws IllegalArgumentException If the provided type is not a valid piece type.
+     */
     private void undoMove(Position source, Position target, Piece capturedPiece) {
         ChessPiece p = (ChessPiece) board.removePiece(target);
         p.decreaseMoveCount();
@@ -234,6 +309,12 @@ public class ChessMatch {
         }
     }
 
+    /**
+     * Validates the source position of a chess move.
+     *
+     * @param position The source position of the move.
+     * @throws ChessException If the source position does not have a piece, the piece is not owned by the current player, or the piece has no possible moves.
+     */
     private void validateSourcePosition(Position position) {
         if (!board.thereIsAPiece(position)) {
             throw new ChessException("There is no piece on source position");
@@ -244,16 +325,36 @@ public class ChessMatch {
         }
     }
 
+    /**
+     * Validates the target position of a chess move.
+     *
+     * @param source The source position of the move.
+     * @param target The target position of the move.
+     * @throws ChessException If the target position is not reachable by the chosen piece.
+     */
     private void validateTargetPosition(Position source, Position target) {
         if (!board.piece(source).possibleMove(target)) {
             throw new ChessException("The chosen piece can't move to target position");
         }
     }
 
+    /**
+     * Returns the opponent color of the provided color.
+     *
+     * @param color The color of the player whose opponent is to be determined.
+     * @return The color of the opponent player.
+     */
     private Color opponent(Color color) {
         return (color == Color.WHITE) ? Color.BLACK : Color.WHITE;
     }
 
+    /**
+     * Returns the king of the specified color.
+     *
+     * @param color The color of the player whose king is to be determined.
+     * @return The king piece of the specified color.
+     * @throws IllegalStateException If there is no king of the specified color on the board.
+     */
     private ChessPiece king(Color color) {
         List<Piece> list = piecesOnTheBoard.stream().filter(x -> ((ChessPiece) x).getColor() == color).toList();
         for (Piece p : list) {
@@ -261,9 +362,15 @@ public class ChessMatch {
                 return (ChessPiece) p;
             }
         }
-        throw new IllegalStateException("There is no " + color + " king on the boar");
+        throw new IllegalStateException("There is no " + color + " king on the board");
     }
 
+    /**
+     * Returns whether the player whose color is specified is in check.
+     *
+     * @param color The color of the player whose check status is to be determined.
+     * @return True if the player is in check, false otherwise.
+     */
     private boolean testCheck(Color color) {
         Position kingPosition = king(color).getChessPosition().toPosition();
         List<Piece> opponentPieces = piecesOnTheBoard.stream().filter(x -> ((ChessPiece) x).getColor() == opponent(color)).toList();
@@ -276,6 +383,12 @@ public class ChessMatch {
         return false;
     }
 
+    /**
+     * Returns whether the player whose color is specified is in checkmate.
+     *
+     * @param color The color of the player whose checkmate status is to be determined.
+     * @return True if the player is in checkmate, false otherwise.
+     */
     private boolean testCheckMate(Color color) {
         if (!testCheck(color)) {
             return false;
@@ -301,7 +414,23 @@ public class ChessMatch {
         return true;
     }
 
+    /**
+     * Places a new piece on the chess board at the specified position.
+     *
+     * @param column The column of the position where the piece will be placed.
+     * @param row    The row of the position where the piece will be placed.
+     * @param piece  The piece to be placed on the board.
+     */
     private void placeNewPiece(char column, int row, ChessPiece piece) {
+        /**
+         * Places a new piece on the chess board at the specified position.
+         *
+         * @param column The column of the position where the piece will be placed.
+         * @param row    The row of the position where the piece will be placed.
+         * @param piece  The piece to be placed on the board.
+         * @return void
+         * @throws IllegalArgumentException If the provided piece is not a valid chess piece.
+         */
         board.placePiece(piece, new ChessPosition(column, row).toPosition());
         piecesOnTheBoard.add(piece);
     }
@@ -312,39 +441,39 @@ public class ChessMatch {
     }
 
     private void initialSetup() {
-//        placeNewPiece('a', 1, new Rook(board, Color.WHITE));
-//        placeNewPiece('b', 1, new Knight(board, Color.WHITE));
-//        placeNewPiece('c', 1, new Bishop(board, Color.WHITE));
-//        placeNewPiece('d', 1, new Queen(board, Color.WHITE));
+        placeNewPiece('a', 1, new Rook(board, Color.WHITE));
+        placeNewPiece('b', 1, new Knight(board, Color.WHITE));
+        placeNewPiece('c', 1, new Bishop(board, Color.WHITE));
+        placeNewPiece('d', 1, new Queen(board, Color.WHITE));
         placeNewPiece('e', 1, new King(board, Color.WHITE, this));
-//        placeNewPiece('f', 1, new Bishop(board, Color.WHITE));
-//        placeNewPiece('g', 1, new Knight(board, Color.WHITE));
-//        placeNewPiece('h', 1, new Rook(board, Color.WHITE));
-//        placeNewPiece('a', 2, new Pawn(board, Color.WHITE, this));
-//        placeNewPiece('b', 2, new Pawn(board, Color.WHITE, this));
-//        placeNewPiece('c', 2, new Pawn(board, Color.WHITE, this));
-//        placeNewPiece('d', 2, new Pawn(board, Color.WHITE, this));
-//        placeNewPiece('e', 2, new Pawn(board, Color.WHITE, this));
-//        placeNewPiece('f', 2, new Pawn(board, Color.WHITE, this));
-        placeNewPiece('g', 7, new Pawn(board, Color.WHITE, this));
-//        placeNewPiece('h', 2, new Pawn(board, Color.WHITE, this));
+        placeNewPiece('f', 1, new Bishop(board, Color.WHITE));
+        placeNewPiece('g', 1, new Knight(board, Color.WHITE));
+        placeNewPiece('h', 1, new Rook(board, Color.WHITE));
+        placeNewPiece('a', 2, new Pawn(board, Color.WHITE, this));
+        placeNewPiece('b', 2, new Pawn(board, Color.WHITE, this));
+        placeNewPiece('c', 2, new Pawn(board, Color.WHITE, this));
+        placeNewPiece('d', 2, new Pawn(board, Color.WHITE, this));
+        placeNewPiece('e', 2, new Pawn(board, Color.WHITE, this));
+        placeNewPiece('f', 2, new Pawn(board, Color.WHITE, this));
+        placeNewPiece('g', 2, new Pawn(board, Color.WHITE, this));
+        placeNewPiece('h', 2, new Pawn(board, Color.WHITE, this));
 
-//        placeNewPiece('a', 8, new Rook(board, Color.BLACK));
-//        placeNewPiece('b', 8, new Knight(board, Color.BLACK));
-//        placeNewPiece('c', 8, new Bishop(board, Color.BLACK));
-//        placeNewPiece('d', 8, new Queen(board, Color.BLACK));
+        placeNewPiece('a', 8, new Rook(board, Color.BLACK));
+        placeNewPiece('b', 8, new Knight(board, Color.BLACK));
+        placeNewPiece('c', 8, new Bishop(board, Color.BLACK));
+        placeNewPiece('d', 8, new Queen(board, Color.BLACK));
         placeNewPiece('e', 8, new King(board, Color.BLACK, this));
-//        placeNewPiece('f', 8, new Bishop(board, Color.BLACK));
-//        placeNewPiece('g', 8, new Knight(board, Color.BLACK));
-//        placeNewPiece('h', 8, new Rook(board, Color.BLACK));
-//        placeNewPiece('a', 7, new Pawn(board, Color.BLACK, this));
-//        placeNewPiece('b', 7, new Pawn(board, Color.BLACK, this));
-//        placeNewPiece('c', 7, new Pawn(board, Color.BLACK, this));
-//        placeNewPiece('d', 7, new Pawn(board, Color.BLACK, this));
-//        placeNewPiece('e', 7, new Pawn(board, Color.BLACK, this));
-//        placeNewPiece('f', 7, new Pawn(board, Color.BLACK, this));
-//        placeNewPiece('g', 7, new Pawn(board, Color.BLACK, this));
-        placeNewPiece('h', 2, new Pawn(board, Color.BLACK, this));
+        placeNewPiece('f', 8, new Bishop(board, Color.BLACK));
+        placeNewPiece('g', 8, new Knight(board, Color.BLACK));
+        placeNewPiece('h', 8, new Rook(board, Color.BLACK));
+        placeNewPiece('a', 7, new Pawn(board, Color.BLACK, this));
+        placeNewPiece('b', 7, new Pawn(board, Color.BLACK, this));
+        placeNewPiece('c', 7, new Pawn(board, Color.BLACK, this));
+        placeNewPiece('d', 7, new Pawn(board, Color.BLACK, this));
+        placeNewPiece('e', 7, new Pawn(board, Color.BLACK, this));
+        placeNewPiece('f', 7, new Pawn(board, Color.BLACK, this));
+        placeNewPiece('g', 7, new Pawn(board, Color.BLACK, this));
+        placeNewPiece('h', 7, new Pawn(board, Color.BLACK, this));
     }
 }
 

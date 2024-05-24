@@ -6,20 +6,30 @@ import chess.ChessMatch;
 import chess.ChessPiece;
 import chess.Color;
 
+/**
+ * Pawn class extends ChessPiece and represents a pawn on the chessboard.
+ */
 public class Pawn extends ChessPiece {
 
     private ChessMatch chessMatch;
 
+    /**
+     * Constructor for Pawn.
+     *
+     * @param board      the chessboard on which the pawn is placed
+     * @param color      the color of the pawn (either WHITE or BLACK)
+     * @param chessMatch the current chess match
+     */
     public Pawn(Board board, Color color, ChessMatch chessMatch) {
         super(board, color);
         this.chessMatch = chessMatch;
     }
 
-    @Override
-    public String toString() {
-        return "P";
-    }
-
+    /**
+     * Returns a 2D boolean array representing all the possible moves of the pawn.
+     *
+     * @return a 2D boolean array where true represents a possible move and false represents an impossible move
+     */
     @Override
     public boolean[][] possibleMoves() {
         boolean[][] mat = new boolean[getBoard().getRows()][getBoard().getColumns()];

@@ -43,6 +43,13 @@ public class UI {
         System.out.flush();
     }
 
+    /**
+     * Reads a chess position from the console input.
+     *
+     * @param sc the Scanner object used to read the input.
+     * @return a ChessPosition object representing the input position.
+     * @throws InputMismatchException if the input is not a valid chess position.
+     */
     public static ChessPosition readChessPosition(Scanner sc) {
         try {
             String s = sc.nextLine();
@@ -54,11 +61,32 @@ public class UI {
         }
     }
 
+    /**
+     * Prints the chess match state, including the board, captured pieces, and current game status.
+     *
+     * @param chessMatch the current state of the chess game.
+     * @param captured   a list of captured ChessPieces.
+     */
     public static void printMatch(ChessMatch chessMatch, List<ChessPiece> captured) {
+        /**
+         * Prints the chess board with the given pieces.
+         *
+         * @param pieces a 2D array of ChessPiece objects representing the chess board.
+         */
         printBoard(chessMatch.getPieces());
         System.out.println();
+
+        /**
+         * Prints the captured pieces of the given list.
+         *
+         * @param captured a list of captured ChessPieces.
+         */
         printCapturedPieces(captured);
         System.out.println();
+
+        /**
+         * Prints the current turn and game status.
+         */
         System.out.println("Turn: " + chessMatch.getTurn());
 
         if (!chessMatch.getCheckMate()) {
@@ -93,17 +121,30 @@ public class UI {
         System.out.println("  a b c d e f g h"); // Prints the alphabetical column headers.
     }
 
+    /**
+     * Prints the chess board with the given pieces and possible moves.
+     *
+     * @param pieces        a 2D array of ChessPiece objects representing the chess board.
+     * @param possibleMoves a 2D boolean array indicating the possible moves for each piece.
+     */
     public static void printBoard(ChessPiece[][] pieces, boolean[][] possibleMoves) {
         for (int i = 0; i < pieces.length; i++) {
-            System.out.print((8 - i) + " ");
+            System.out.print((8 - i) + " "); // Prints the row number in reverse order.
             for (int j = 0; j < pieces.length; j++) {
-                printPiece(pieces[i][j], possibleMoves[i][j]);
+                printPiece(pieces[i][j], possibleMoves[i][j]); // Prints the ChessPiece at the specified position.
+                // with the option to highlight possible moves.
             }
-            System.out.println();
+            System.out.println(); // Prints a new line after each row.
         }
-        System.out.println("  a b c d e f g h");
+        System.out.println("  a b c d e f g h"); // Prints the alphabetical column headers.
     }
 
+    /**
+     * Prints a ChessPiece on the console, optionally with a background color.
+     *
+     * @param piece      the ChessPiece to be printed.
+     * @param background if true, the piece will be printed with a background color.
+     */
     private static void printPiece(ChessPiece piece, boolean background) {
         if (background) {
             System.out.print(ANSI_BLUE_BACKGROUND);
@@ -120,9 +161,14 @@ public class UI {
         System.out.print(" ");
     }
 
+    /**
+     * Prints the captured pieces of the given list.
+     *
+     * @param captured a list of captured ChessPieces.
+     */
     private static void printCapturedPieces(List<ChessPiece> captured) {
-        List<ChessPiece> white = captured.stream().filter(x -> x.getColor() == Color.WHITE).toList();
-        List<ChessPiece> black = captured.stream().filter(x -> x.getColor() == Color.BLACK).toList();
+        List<ChessPiece> white = captured.stream().filter(x -> x.getColor() == Color.WHITE).collect(Collectors.toList());
+        List<ChessPiece> black = captured.stream().filter(x -> x.getColor() == Color.BLACK).collect(Collectors.toList());
 
         System.out.println("Captured pieces: ");
         System.out.print("White: ");
