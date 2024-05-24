@@ -1,8 +1,8 @@
 # Chess Project
 
-
-
-![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
+<p align="center">
+    <img src="https://github.com/OlirumNunes/Chess_System/assets/150186772/5377b424-3ce7-4e04-b3ed-78f816dcc5d4" width="200px">
+</p>
 
 [![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/Naereen/StrapDown.js/blob/master/LICENSE)
 
